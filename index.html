@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <title>Cámara PWA</title>
+
+    <!-- Manifiesto para instalación -->
+    <link rel="manifest" href="manifest.json" />
+  </head>
+  <body>
+    <h1>Cámara PWA Demo</h1>
+
+    <button id="openCamera">Abrir Cámara</button>
+
+    <div id="cameraContainer" style="display: none">
+      <video id="video" width="320" height="240" autoplay></video>
+      <button id="takePhoto">Tomar Foto</button>
+    </div>
+
+    <canvas id="canvas" width="320" height="240" style="display: none"></canvas>
+
+    <!-- Lógica principal -->
+    <script src="app.js"></script>
+
+    <!-- Registro del Service Worker -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("sw.js")
+          .then(() => console.log("Service Worker registrado"))
+          .catch((err) => console.error("Error al registrar el SW:", err));
+      }
+      
+    </script>
+  </body>
+</html>
