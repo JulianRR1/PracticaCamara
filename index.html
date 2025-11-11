@@ -1,4 +1,14 @@
-<style>
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#007bff" />
+    <title>Cámara PWA</title>
+
+    <link rel="manifest" href="manifest.json" />
+
+    <style>
       /* --- Reseteo Básico y Globales --- */
       * {
         box-sizing: border-box;
@@ -135,6 +145,39 @@
         transform: scale(1.05);
       }
     </style>
-    ```
+    
+    </head>
+  <body>
+    <main>
+      <h1>Cámara PWA Demo</h1>
 
-Ahora, sin importar si la foto es vertical (9:16) u horizontal (16:9), se verá completa dentro de la miniatura de 120x90px, con un fondo negro que rellena el espacio sobrante.
+      <button id="openCamera">Abrir Cámara</button>
+
+      <div id="cameraContainer" style="display: none">
+        <video id="video" width="320" height="240" autoplay></video>
+        <button id="takePhoto">Tomar Foto</button>
+      </div>
+
+      <canvas
+        id="canvas"
+        width="320"
+        height="240"
+        style="display: none"
+      ></canvas>
+
+      <h2>Mi Carrete</h2>
+      <div id="galleryContainer">
+        </div>
+    </main>
+    <script src="app.js"></script>
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("sw.js")
+          .then(() => console.log("Service Worker registrado"))
+          .catch((err) => console.error("Error al registrar el SW:", err));
+      }
+    </script>
+  </body>
+</html>
