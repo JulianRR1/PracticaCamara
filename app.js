@@ -4,59 +4,66 @@ const video = document.getElementById('video');
 const takePhotoBtn = document.getElementById('takePhoto');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
+const galleryContainer = document.getElementById('galleryContainer'); // <-- NUEVO
 
 let stream = null;
 
 async function openCamera() {
-    try {
-        const constraints = {
-            video: {
-                facingMode: { ideal: 'environment' }, 
-                width: { ideal: 320 },
-                height: { ideal: 240 }
-            }
-        };
+  try {
+    const constraints = {
+      video: {
+        facingMode: { ideal: 'environment' },
+        width: { ideal: 320 },
+        height: { ideal: 240 },
+      },
+    };
 
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
-        video.srcObject = stream;
+    stream = await navigator.mediaDevices.getUserMedia(constraints);
+    video.srcObject = stream;
 
-        cameraContainer.style.display = 'block';
-        openCameraBtn.textContent = 'Cámara Abierta';
-        openCameraBtn.disabled = true;
+    cameraContainer.style.display = 'block';
+    openCameraBtn.textContent = 'Cámara Abierta';
+    openCameraBtn.disabled = true;
 
-        console.log('Cámara abierta');
-    } catch (error) {
-        console.error('Error al acceder a la cámara:', error);
-        alert('Permiso denegado o la cámara no está disponible.');
-    }
+    console.log('Cámara abierta');
+  } catch (error) {
+    console.error('Error al acceder a la cámara:', error);
+    alert('Permiso denegado o la cámara no está disponible.');
+  }
 }
 
 function takePhoto() {
-    if (!stream) {
-        alert('Primero abre la cámara');
-        return;
-    }
+  if (!stream) {
+    alert('Primero abre la cámara');
+    return;
+  }
 
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const data = canvas.toDataURL('image/png');
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const data = canvas.toDataURL('image/png');
 
-    console.log('Foto capturada (base64):', data.slice(0, 50) + '...');
+  const img = document.createElement('img');
+  img.src = data;
+  img.classList.add('carousel-item'); 
 
-    closeCamera();
+  galleryContainer.appendChild(img);
+
+  galleryContainer.scrollLeft = galleryContainer.scrollWidth;
+
+  closeCamera();
 }
 
 function closeCamera() {
-    if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        stream = null;
-        video.srcObject = null;
+  if (stream) {
+    stream.getTracks().forEach((track) => track.stop());
+    stream = null;
+    video.srcObject = null;
 
-        cameraContainer.style.display = 'none';
-        openCameraBtn.textContent = 'Abrir Cámara';
-        openCameraBtn.disabled = false;
+    cameraContainer.style.display = 'none';
+    openCameraBtn.textContent = 'Abrir Cámara';
+    openCameraBtn.disabled = false;
 
-        console.log('Cámara cerrada');
-    }
+    console.log('Cámara cerrada');
+  }
 }
 
 openCameraBtn.addEventListener('click', openCamera);

@@ -3,28 +3,169 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#007bff" />
     <title>Cámara PWA</title>
 
-    <!-- Manifiesto para instalación -->
     <link rel="manifest" href="manifest.json" />
-  </head>
+
+    <style>
+      /* --- Reseteo Básico y Globales --- */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        background-color: #f4f7f6; /* Un fondo suave, no blanco puro */
+        color: #333;
+        line-height: 1.6;
+      }
+
+      /* --- Contenedor Principal (App) --- */
+      main {
+        max-width: 600px; /* Ancho máximo para la app */
+        margin: 0 auto; /* Centrado */
+        padding: 1.5rem;
+        background-color: #ffffff; /* Fondo blanco tipo "tarjeta" */
+        min-height: 100vh;
+      }
+
+      h1,
+      h2 {
+        text-align: center;
+        color: #222;
+        margin-bottom: 1.5rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        border-top: 1px solid #eee; /* Separador */
+        padding-top: 1.5rem;
+      }
+
+      /* --- Estilo de Botones --- */
+      button {
+        display: block; /* Ocupan todo el ancho */
+        width: 100%;
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #ffffff;
+        background-color: #007bff; /* Azul primario */
+        border: none;
+        border-radius: 8px; /* Bordes redondeados */
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+      }
+
+      button:hover {
+        background-color: #0056b3; /* Azul más oscuro */
+      }
+
+      button:active {
+        transform: scale(0.98); /* Efecto de clic */
+      }
+
+      /* --- Contenedor de la Cámara --- */
+      #cameraContainer {
+        /* JS lo cambia de 'none' a 'block' o 'flex' */
+        /* Lo preparamos para flex */
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem; /* Espacio entre video y botón */
+        margin-bottom: 1.5rem;
+      }
+
+      #video {
+        width: 100%; /* Responsive */
+        height: auto;
+        border-radius: 8px; /* Bordes redondeados para el video */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Botón de tomar foto */
+      #takePhoto {
+        background-color: #dc3545; /* Rojo "grabar" */
+      }
+      #takePhoto:hover {
+        background-color: #c82333;
+      }
+
+      /* Canvas oculto */
+      #canvas {
+        display: none;
+      }
+
+      /* --- Galería / Carrusel --- */
+      #galleryContainer {
+        display: flex;
+        overflow-x: auto; /* Scroll horizontal */
+        background-color: #e9ecef; /* Fondo de galería más sutil */
+        padding: 1rem;
+        margin-top: 1rem;
+        border-radius: 8px;
+        min-height: 130px; /* Más altura para las fotos */
+        align-items: center; /* Centra las fotos verticalmente */
+
+        /* Estilo de la barra de scroll (opcional pero bonito) */
+        scrollbar-width: thin;
+        scrollbar-color: #007bff #e9ecef;
+      }
+
+      /* Mensaje si la galería está vacía */
+      #galleryContainer:empty::before {
+        content: "Aún no has tomado fotos.";
+        color: #888;
+        width: 100%;
+        text-align: center;
+        font-style: italic;
+      }
+
+      .carousel-item {
+        width: 120px;
+        height: 90px;
+        object-fit: cover;
+        margin-right: 10px;
+        border-radius: 6px;
+        border: 3px solid white; /* Borde blanco para destacar */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        flex-shrink: 0; /* Evita que se encojan */
+        transition: transform 0.2s ease;
+      }
+
+      .carousel-item:hover {
+        transform: scale(1.05); /* Efecto de zoom */
+      }
+    </style>
+    </head>
   <body>
-    <h1>Cámara PWA Demo</h1>
+    <main>
+      <h1>Cámara PWA Demo</h1>
 
-    <button id="openCamera">Abrir Cámara</button>
+      <button id="openCamera">Abrir Cámara</button>
 
-    <div id="cameraContainer" style="display: none">
-      <video id="video" width="320" height="240" autoplay></video>
-      <button id="takePhoto">Tomar Foto</button>
-    </div>
+      <div id="cameraContainer" style="display: none">
+        <video id="video" width="320" height="240" autoplay></video>
+        <button id="takePhoto">Tomar Foto</button>
+      </div>
 
-    <canvas id="canvas" width="320" height="240" style="display: none"></canvas>
+      <canvas
+        id="canvas"
+        width="320"
+        height="240"
+        style="display: none"
+      ></canvas>
 
-    <!-- Lógica principal -->
+      <h2>Mi Carrete</h2>
+      <div id="galleryContainer">
+        </div>
+    </main>
     <script src="app.js"></script>
 
-    <!-- Registro del Service Worker -->
     <script>
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker
@@ -32,7 +173,6 @@
           .then(() => console.log("Service Worker registrado"))
           .catch((err) => console.error("Error al registrar el SW:", err));
       }
-      
     </script>
   </body>
 </html>
