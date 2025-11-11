@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#007bff" />
-    <title>Cámara PWA</title>
-
-    <link rel="manifest" href="manifest.json" />
-
-    <style>
+<style>
       /* --- Reseteo Básico y Globales --- */
       * {
         box-sizing: border-box;
@@ -19,17 +9,17 @@
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           Helvetica, Arial, sans-serif;
-        background-color: #f4f7f6; /* Un fondo suave, no blanco puro */
+        background-color: #f4f7f6;
         color: #333;
         line-height: 1.6;
       }
 
       /* --- Contenedor Principal (App) --- */
       main {
-        max-width: 600px; /* Ancho máximo para la app */
-        margin: 0 auto; /* Centrado */
+        max-width: 600px;
+        margin: 0 auto;
         padding: 1.5rem;
-        background-color: #ffffff; /* Fondo blanco tipo "tarjeta" */
+        background-color: #ffffff;
         min-height: 100vh;
       }
 
@@ -42,54 +32,52 @@
 
       h2 {
         font-size: 1.5rem;
-        border-top: 1px solid #eee; /* Separador */
+        border-top: 1px solid #eee;
         padding-top: 1.5rem;
       }
 
       /* --- Estilo de Botones --- */
       button {
-        display: block; /* Ocupan todo el ancho */
+        display: block;
         width: 100%;
         padding: 0.8rem 1rem;
         font-size: 1rem;
         font-weight: 600;
         color: #ffffff;
-        background-color: #007bff; /* Azul primario */
+        background-color: #007bff;
         border: none;
-        border-radius: 8px; /* Bordes redondeados */
+        border-radius: 8px;
         cursor: pointer;
         transition: background-color 0.2s ease, transform 0.1s ease;
       }
 
       button:hover {
-        background-color: #0056b3; /* Azul más oscuro */
+        background-color: #0056b3;
       }
 
       button:active {
-        transform: scale(0.98); /* Efecto de clic */
+        transform: scale(0.98);
       }
 
       /* --- Contenedor de la Cámara --- */
       #cameraContainer {
-        /* JS lo cambia de 'none' a 'block' o 'flex' */
-        /* Lo preparamos para flex */
         display: none;
         flex-direction: column;
         align-items: center;
-        gap: 1rem; /* Espacio entre video y botón */
+        gap: 1rem;
         margin-bottom: 1.5rem;
       }
 
       #video {
-        width: 100%; /* Responsive */
+        width: 100%;
         height: auto;
-        border-radius: 8px; /* Bordes redondeados para el video */
+        border-radius: 8px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       }
 
       /* Botón de tomar foto */
       #takePhoto {
-        background-color: #dc3545; /* Rojo "grabar" */
+        background-color: #dc3545;
       }
       #takePhoto:hover {
         background-color: #c82333;
@@ -103,20 +91,18 @@
       /* --- Galería / Carrusel --- */
       #galleryContainer {
         display: flex;
-        overflow-x: auto; /* Scroll horizontal */
-        background-color: #e9ecef; /* Fondo de galería más sutil */
+        overflow-x: auto;
+        background-color: #e9ecef;
         padding: 1rem;
         margin-top: 1rem;
         border-radius: 8px;
-        min-height: 130px; /* Más altura para las fotos */
-        align-items: center; /* Centra las fotos verticalmente */
+        min-height: 130px;
+        align-items: center;
 
-        /* Estilo de la barra de scroll (opcional pero bonito) */
         scrollbar-width: thin;
         scrollbar-color: #007bff #e9ecef;
       }
 
-      /* Mensaje si la galería está vacía */
       #galleryContainer:empty::before {
         content: "Aún no has tomado fotos.";
         color: #888;
@@ -125,54 +111,30 @@
         font-style: italic;
       }
 
+      /* ===== AQUÍ ESTÁ EL CAMBIO ===== */
       .carousel-item {
         width: 120px;
         height: 90px;
-        object-fit: cover;
+        
+        /* 1. La propiedad clave: "contain" */
+        object-fit: contain; /* Mantiene el aspecto, no recorta */
+
+        /* 2. Fondo para el letterboxing */
+        background-color: #000; /* Fondo negro para los espacios vacíos */
+        
+        /* 3. Ajustes estéticos */
         margin-right: 10px;
         border-radius: 6px;
-        border: 3px solid white; /* Borde blanco para destacar */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-        flex-shrink: 0; /* Evita que se encojan */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* La sombra ya da separación */
+        flex-shrink: 0;
         transition: transform 0.2s ease;
       }
+      /* ===== FIN DEL CAMBIO ===== */
 
       .carousel-item:hover {
-        transform: scale(1.05); /* Efecto de zoom */
+        transform: scale(1.05);
       }
     </style>
-    </head>
-  <body>
-    <main>
-      <h1>Cámara PWA Demo</h1>
+    ```
 
-      <button id="openCamera">Abrir Cámara</button>
-
-      <div id="cameraContainer" style="display: none">
-        <video id="video" width="320" height="240" autoplay></video>
-        <button id="takePhoto">Tomar Foto</button>
-      </div>
-
-      <canvas
-        id="canvas"
-        width="320"
-        height="240"
-        style="display: none"
-      ></canvas>
-
-      <h2>Mi Carrete</h2>
-      <div id="galleryContainer">
-        </div>
-    </main>
-    <script src="app.js"></script>
-
-    <script>
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker
-          .register("sw.js")
-          .then(() => console.log("Service Worker registrado"))
-          .catch((err) => console.error("Error al registrar el SW:", err));
-      }
-    </script>
-  </body>
-</html>
+Ahora, sin importar si la foto es vertical (9:16) u horizontal (16:9), se verá completa dentro de la miniatura de 120x90px, con un fondo negro que rellena el espacio sobrante.
